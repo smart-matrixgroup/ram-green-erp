@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false; // set role manually in Firebase Console
+    }
+    // customers store code, projectName, budget, projectValue, projectStatus.
+    // expenses may store clientId, clientCode, clientName.
+    // Expenses without clientId are general costs and stay readable.
+    // Totals are not stored; the app calculates them from these documents.
+    match /{col}/{id} {
+      allow read, create, update: if request.auth != null;
+      allow delete: if request.auth != null && isAdmin();
+    }
+  }
+}
