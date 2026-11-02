@@ -120,7 +120,7 @@ function printQuotation(q) {
     @media print{body{padding:10px 16px}}
   </style></head><body>
   <div class="header">
-    <img src="/logo.svg" alt="RAM Green Energy" width="70" height="70" style="border-radius:50%;flex:none"/>
+    <img src="/logo.png" alt="RAM Green Energy" width="70" height="70" style="border-radius:50%;flex:none"/>
     <div>
       <div class="co-name">RAM GREEN ENERGY (PVT) LTD.</div>
       <div class="co-sub">No.135B, 1st Floor, Inner harbor Road, Orr's hill, Trincomalee.<br>
@@ -1002,7 +1002,7 @@ function printBill(bill) {
     @media print{body{padding:10px 16px}}
   </style></head><body>
   <div class="header">
-    <img src="/logo.svg" alt="RAM Green Energy" width="70" height="70" style="border-radius:50%;flex:none"/>
+    <img src="/logo.png" alt="RAM Green Energy" width="70" height="70" style="border-radius:50%;flex:none"/>
     <div>
       <div class="co-name">RAM GREEN ENERGY (PVT) LTD.</div>
       <div class="co-sub">No.135B, 1st Floor, Inner harbor Road, Orr's hill, Trincomalee.<br>
@@ -1417,7 +1417,7 @@ function Logo({ big }) {
   const z = big ? 96 : 52;
   return (
     <img
-      src="/logo.svg"
+      src="/logo.png"
       alt="Ram Green Energy Logo"
       width={z}
       height={z}
