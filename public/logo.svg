@@ -2,64 +2,62 @@
   <!-- Outer circle border -->
   <circle cx="110" cy="110" r="106" fill="white" stroke="#111" stroke-width="5"/>
 
-  <!-- SUN (top-left area) -->
-  <!-- Sun rays -->
+  <!-- SUN rays (no vertical line hanging down) -->
   <g stroke="#111" stroke-width="2.8" stroke-linecap="round">
-    <line x1="68" y1="28" x2="68" y2="38"/>
-    <line x1="68" y1="78" x2="68" y2="88"/>
-    <line x1="43" y1="53" x2="53" y2="53"/>
-    <line x1="83" y1="53" x2="93" y2="53"/>
-    <line x1="50" y1="35" x2="57" y2="42"/>
-    <line x1="79" y1="64" x2="86" y2="71"/>
-    <line x1="86" y1="35" x2="79" y2="42"/>
-    <line x1="57" y1="64" x2="50" y2="71"/>
-    <!-- extra rays -->
-    <line x1="68" y1="28" x2="68" y2="36"/>
-    <line x1="88" y1="33" x2="83" y2="40"/>
-    <line x1="93" y1="53" x2="85" y2="53"/>
-    <line x1="88" y1="73" x2="83" y2="66"/>
-    <line x1="68" y1="88" x2="68" y2="80"/>
-    <line x1="48" y1="73" x2="53" y2="66"/>
-    <line x1="43" y1="53" x2="51" y2="53"/>
-    <line x1="48" y1="33" x2="53" y2="40"/>
+    <!-- Top -->
+    <line x1="68" y1="30" x2="68" y2="38"/>
+    <!-- Bottom -->
+    <line x1="68" y1="68" x2="68" y2="76"/>
+    <!-- Left -->
+    <line x1="30" y1="53" x2="38" y2="53"/>
+    <!-- Right -->
+    <line x1="98" y1="53" x2="90" y2="53"/>
+    <!-- Top-right diagonal -->
+    <line x1="88" y1="33" x2="82" y2="39"/>
+    <!-- Bottom-right diagonal -->
+    <line x1="88" y1="73" x2="82" y2="67"/>
+    <!-- Top-left diagonal -->
+    <line x1="48" y1="33" x2="54" y2="39"/>
+    <!-- Bottom-left diagonal -->
+    <line x1="48" y1="73" x2="54" y2="67"/>
   </g>
   <!-- Sun circle (hollow) -->
-  <circle cx="68" cy="53" r="14" fill="white" stroke="#111" stroke-width="3.5"/>
+  <circle cx="68" cy="53" r="13" fill="white" stroke="#111" stroke-width="3.5"/>
 
   <!-- RAM text -->
-  <text x="95" y="50" font-family="Arial Black,Impact,sans-serif" font-size="22" font-weight="900" fill="#111">RAM</text>
+  <text x="96" y="50" font-family="Arial Black,Impact,sans-serif" font-size="23" font-weight="900" fill="#111">RAM</text>
   <!-- Green Energy text -->
-  <text x="95" y="65" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#111">Green Energy</text>
+  <text x="96" y="65" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#111">Green Energy</text>
 
   <!-- BATTERY BODY (rounded rect) -->
-  <rect x="28" y="110" width="140" height="68" rx="14" ry="14" fill="#111"/>
+  <rect x="22" y="108" width="152" height="72" rx="15" ry="15" fill="#111"/>
   <!-- Battery terminal on right -->
-  <rect x="168" y="126" width="16" height="32" rx="5" ry="5" fill="#111"/>
-  <!-- White inner area of battery -->
-  <rect x="36" y="118" width="120" height="52" rx="8" ry="8" fill="white"/>
+  <rect x="174" y="124" width="16" height="34" rx="5" ry="5" fill="#111"/>
+  <!-- White inner area -->
+  <rect x="31" y="116" width="132" height="56" rx="9" ry="9" fill="white"/>
 
-  <!-- SOLAR PANELS (6 parallelogram cells, 2 rows x 3 cols, dark fill) -->
+  <!-- SOLAR PANELS — 6 cells, 2 rows x 3 cols, slight diagonal -->
   <!-- Row 1 -->
-  <polygon points="42,124  74,118  74,132  42,138" fill="#222"/>
-  <polygon points="78,118  110,112  110,126  78,132" fill="#222"/>
-  <polygon points="114,112  146,106  146,120  114,126" fill="#222"/>
+  <polygon points="37,122  78,117  78,133  37,138" fill="#222"/>
+  <polygon points="82,117  116,113  116,129  82,133" fill="#222"/>
+  <polygon points="120,113  155,109  155,125  120,129" fill="#222"/>
   <!-- Row 2 -->
-  <polygon points="42,140  74,134  74,148  42,154" fill="#222"/>
-  <polygon points="78,134  110,128  110,142  78,148" fill="#222"/>
-  <polygon points="114,128  146,122  146,136  114,142" fill="#222"/>
+  <polygon points="37,140  78,135  78,151  37,156" fill="#222"/>
+  <polygon points="82,135  116,131  116,147  82,151" fill="#222"/>
+  <polygon points="120,131  155,127  155,143  120,147" fill="#222"/>
 
-  <!-- POWER CORD going down-left from battery -->
-  <path d="M 75 178 Q 70 192 60 194 Q 50 196 48 188" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- POWER CORD -->
+  <path d="M 72 180 Q 66 194 56 196 Q 46 198 44 190" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
 
   <!-- PLUG body -->
-  <rect x="40" y="183" width="16" height="9" rx="3" fill="#111"/>
+  <rect x="36" y="185" width="16" height="9" rx="3" fill="#111"/>
   <!-- Plug pins -->
-  <line x1="44" y1="192" x2="44" y2="199" stroke="#111" stroke-width="3" stroke-linecap="round"/>
-  <line x1="52" y1="192" x2="52" y2="199" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+  <line x1="41" y1="194" x2="41" y2="201" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+  <line x1="48" y1="194" x2="48" y2="201" stroke="#111" stroke-width="3" stroke-linecap="round"/>
 
-  <!-- Bottom curved text path -->
-  <path id="btmArc" d="M 22 148 A 92 92 0 0 0 198 148" fill="none"/>
-  <text font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#111" letter-spacing="1">
+  <!-- Bottom curved text — full arc inside circle -->
+  <path id="btmArc" d="M 18 140 A 96 96 0 0 0 202 140" fill="none"/>
+  <text font-family="Arial,sans-serif" font-size="10.5" font-weight="700" fill="#111" letter-spacing="1.5">
     <textPath href="#btmArc" startOffset="50%" text-anchor="middle">RO GREEN ENERGY PVT LTD</textPath>
   </text>
 </svg>
