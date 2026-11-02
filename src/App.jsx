@@ -97,28 +97,35 @@ function printQuotation(q) {
     </tr>`).join("");
   const total = items.reduce((s, it) => s + Number(it.amount || Number(it.qty||1)*Number(it.unitPrice||0)), 0);
   // Panel serial numbers
-  const serials = q.panelSerials ? String(q.panelSerials).split("\n").map((s,i) => s.trim()).filter(Boolean) : [];
+  const serials = q.panelSerials ? String(q.panelSerials).split("\n").map((s) => s.trim()).filter(Boolean) : [];
   const serialTable = serials.length ? `
-    <table style="margin-top:18px;width:auto;min-width:260px">
-      <thead><tr><th style="text-align:center">NO</th><th>Panel Serial Numbers</th></tr></thead>
-      <tbody>${serials.map((s,i) => `<tr><td style="text-align:center">${String(i+1).padStart(2,"0")}</td><td>${escHtml(s)}</td></tr>`).join("")}</tbody>
+    <table style="margin-top:14px;width:100%;border-collapse:collapse">
+      <thead><tr>
+        <th style="text-align:center;width:60px;background:#e8f5e9;border:1px solid #888;padding:6px">NO</th>
+        <th style="text-align:left;background:#e8f5e9;border:1px solid #888;padding:6px;font-size:13px">Panel Serial Numbers</th>
+      </tr></thead>
+      <tbody>${serials.map((s, i) => `
+        <tr>
+          <td style="text-align:center;border:1px solid #aaa;padding:5px 8px">${String(i + 1).padStart(2, "0")}</td>
+          <td style="border:1px solid #aaa;padding:5px 8px;font-family:monospace;font-size:12px">${escHtml(s)}</td>
+        </tr>`).join("")}
+      </tbody>
     </table>` : "";
   w.document.write(`<!doctype html><html><head><title>Quotation</title><style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:"Times New Roman",serif;font-size:12px;color:#111;padding:28px 36px}
-    .header{display:flex;align-items:flex-start;gap:18px;border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:14px}
-    .logo-box{width:64px;height:64px;border:2px solid #166534;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;font-size:9px;font-weight:700;color:#166534;text-align:center;padding:4px}
-    .co-name{font-size:20px;font-weight:800;letter-spacing:.04em}
-    .co-sub{font-size:10.5px;color:#444;margin-top:3px;line-height:1.5}
-    .cust-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:11.5px}
-    .cust-table td{border:1px solid #aaa;padding:5px 10px}
+    body{font-family:"Times New Roman",serif;font-size:13px;color:#111;padding:24px 32px}
+    .header{display:flex;align-items:center;gap:14px;border-bottom:2.5px solid #111;padding-bottom:8px;margin-bottom:12px}
+    .co-name{font-size:22px;font-weight:900;letter-spacing:.04em}
+    .co-sub{font-size:11px;color:#444;margin-top:3px;line-height:1.5}
+    .cust-table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:13px}
+    .cust-table td{border:1px solid #aaa;padding:6px 10px}
     .cust-table td:first-child{width:140px;background:#f0fdf4;font-weight:700}
-    table{width:100%;border-collapse:collapse;font-size:11.5px}
+    table{width:100%;border-collapse:collapse;font-size:13px}
     th{background:#e8f5e9;border:1px solid #888;padding:6px 8px;font-weight:700}
     td{border:1px solid #aaa;padding:5px 8px;vertical-align:top}
-    .total-row td{font-weight:800;background:#f5f5f5;font-size:12.5px}
-    .thankyou{text-align:center;margin-top:16px;font-size:13px;font-style:italic;font-weight:700}
-    @media print{body{padding:10px 16px}}
+    .total-row td{font-weight:800;background:#f5f5f5;font-size:13px}
+    .thankyou{text-align:center;margin-top:14px;font-size:13px;font-style:italic;font-weight:700}
+    @media print{body{padding:8px 14px}@page{margin:5mm}html,body{height:auto}}
   </style></head><body>
   <div class="header">
     <img src="${logoImg}" alt="RAM Green Energy" width="70" height="70" style="border-radius:50%;flex:none"/>
