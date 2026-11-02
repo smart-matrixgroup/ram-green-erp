@@ -705,43 +705,112 @@ function payLabel(row) {
 
 function printBill(bill) {
   const totals = billTotals(bill);
-  const kind = bill.docType === "Bill" ? "Bill" : "Invoice";
-  const heading = String(bill.heading || "").trim() || t(kind === "Bill" ? "BILL" : "INVOICE");
   const w = window.open("", "_blank");
   if (!w) { toast("Allow pop-ups to print"); return; }
-  const lines = totals.items.map((it) => `<tr><td>${escHtml(it.desc || "—")}</td><td>${fmt(it.qty)}</td><td>${fmt(it.rate)}</td><td>${fmt(Number(it.qty || 0) * Number(it.rate || 0))}</td></tr>`).join("");
-  const payBits = [t(bill.paymentMethod || "")];
-  if (bill.paymentMethod === "Cheque") payBits.push(bill.chequeNo, bill.bankName, bill.chequeDate);
-  if (bill.paymentMethod === "Bank transfer") payBits.push(bill.transferRef, bill.bankName);
-  const pay = bill.paymentMethod ? `<div class="note"><b>${escHtml(t("Payment"))}</b><br>${escHtml(payBits.filter(Boolean).join(" · "))}</div>` : "";
-  w.document.write(`<!doctype html><html lang="${getLang() === "ta" ? "ta" : "en"}"><head><title>${escHtml(heading)}</title><style>
-    body{font-family:"Noto Sans Tamil","Nirmala UI",system-ui,sans-serif;padding:36px;color:#111}h1{margin:0;color:#166534;font-size:28px}
-    h2{margin:.2rem 0 0;letter-spacing:.08em;font-size:20px}.meta{display:flex;justify-content:space-between;gap:24px;margin:22px 0}
-    table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #d1d5db;padding:10px 8px;text-align:left}
-    th{background:#f0fdf4}td:nth-child(n+2),th:nth-child(n+2){text-align:right}
-    .sum{margin-left:auto;width:280px;margin-top:12px}.sum div{display:flex;justify-content:space-between;padding:4px 0}
-    .grand{font-size:18px;color:#166534;font-weight:800}.note{margin-top:22px;white-space:pre-wrap}
+  const lines = totals.items.map((it) => `
+    <tr>
+      <td style="text-align:left">${escHtml(it.desc || "—")}</td>
+      <td style="text-align:center">${Number(it.qty||0) > 0 ? fmt(it.qty) : ""}</td>
+      <td style="text-align:right">${fmt(Number(it.qty||0)*Number(it.rate||0))}</td>
+    </tr>`).join("");
+  const advance = bill.advanceDate || bill.advanceAmount ? `
+    <tr>
+      <td style="text-align:left">${escHtml(bill.advanceDate || "")} — ${escHtml(bill.advanceMethod || "Cash Deposit")}</td>
+      <td style="text-align:center">Advance</td>
+      <td style="text-align:right">${fmt(bill.advanceAmount)}</td>
+    </tr>` : "";
+  const finalpay = bill.finalDate || bill.finalAmount ? `
+    <tr>
+      <td style="text-align:left">${escHtml(bill.finalDate || "")} — ${escHtml(bill.finalMethod || "Cash Deposit")}</td>
+      <td style="text-align:center">Final Pay</td>
+      <td style="text-align:right">${fmt(bill.finalAmount)}</td>
+    </tr>` : "";
+  const fullPaidRow = bill.status === "Paid" ? `
+    <tr><td colspan="3" style="text-align:center;font-weight:800;border-top:2px solid #166534;padding-top:8px">Full Paid</td></tr>` : "";
+
+  w.document.write(`<!doctype html><html><head><title>Invoice</title><style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Times New Roman",serif;font-size:12px;color:#111;padding:28px 36px}
+    .header{display:flex;align-items:flex-start;gap:18px;border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:14px}
+    .logo-box{width:64px;height:64px;border:2px solid #166534;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;font-size:9px;font-weight:700;color:#166534;text-align:center;padding:4px}
+    .co-name{font-size:20px;font-weight:800;letter-spacing:.04em;color:#111}
+    .co-sub{font-size:10.5px;color:#444;margin-top:3px;line-height:1.5}
+    .inv-title{text-align:center;font-size:17px;font-weight:700;margin:10px 0 12px;letter-spacing:.1em}
+    .meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;font-size:11.5px}
+    .meta .bill-to{line-height:1.7}
+    .meta .bill-right{text-align:right;line-height:1.7}
+    table{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:11.5px}
+    th{background:#e8f5e9;border:1px solid #888;padding:6px 8px;font-weight:700;text-align:center}
+    td{border:1px solid #aaa;padding:5px 8px;vertical-align:top}
+    .subtotal-row td{font-weight:700;background:#f5f5f5}
+    .terms{margin-top:14px;font-size:10px;line-height:1.6;border-top:1px solid #aaa;padding-top:10px}
+    .terms b{font-size:11px}
+    .thankyou{text-align:center;margin-top:18px;font-size:13px;font-style:italic;font-weight:700}
+    @media print{body{padding:10px 16px}}
   </style></head><body>
-  <h1>Ram Green Solar Energy</h1><h2>${escHtml(heading)}</h2>
-  <div class="meta"><div><b>${escHtml(t("{kind} to", { kind }))}</b><br>${escHtml(bill.customer || "—")}</div>
-  <div><b>${escHtml(t("{kind} no.", { kind }))}</b> ${escHtml(bill.no || "—")}<br><b>${escHtml(t("Date"))}</b> ${escHtml(bill.date || "—")}<br><b>${escHtml(t("Status"))}</b> ${escHtml(t(bill.status || "Unpaid"))}</div></div>
-  <table><thead><tr><th>${escHtml(t("Description"))}</th><th>${escHtml(t("Qty"))}</th><th>${escHtml(t("Rate (LKR)"))}</th><th>${escHtml(t("Amount (LKR)"))}</th></tr></thead><tbody>${lines}</tbody></table>
-  <div class="sum"><div><span>${escHtml(t("Subtotal"))}</span><b>${fmt(totals.sub)}</b></div>
-  <div><span>${escHtml(t("Discount"))}</span><b>${fmt(totals.discount)}</b></div>
-  <div><span>${escHtml(t("Tax"))} ${fmt(bill.taxPct)}%</span><b>${fmt(totals.tax)}</b></div>
-  <div class="grand"><span>${escHtml(t("Total"))}</span><span>LKR ${fmt(totals.total)}</span></div></div>
-  ${pay}
-  ${bill.notes ? `<div class="note"><b>${escHtml(t("Notes"))}</b><br>${escHtml(bill.notes)}</div>` : ""}
-  ${bill.terms ? `<div class="note"><b>${escHtml(t("Terms"))}</b><br>${escHtml(bill.terms)}</div>` : ""}
+  <div class="header">
+    <div class="logo-box">RAM<br>GREEN</div>
+    <div>
+      <div class="co-name">RAM GREEN ENERGY (PVT) LTD.</div>
+      <div class="co-sub">No.135B, 1st Floor, Inner harbor Road, Orr's hill, Trincomalee.<br>
+      026-2221400 / 0775158810 / 0775512831</div>
+    </div>
+  </div>
+  <div class="inv-title">Invoice</div>
+  <div class="meta">
+    <div class="bill-to">
+      <b>Bill To:</b> ${escHtml(bill.customer || "—")}<br>
+      ${bill.billAddress ? escHtml(bill.billAddress) : ""}
+    </div>
+    <div class="bill-right">
+      <b>Date:</b> ${escHtml(bill.date || today())}<br>
+      <b>Invoice No:</b> ${escHtml(bill.no || "—")}<br>
+      <b>Customer File No:</b> ${escHtml(bill.customerFileNo || "—")}
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>Description</th><th>Quantity</th><th>Amount</th></tr></thead>
+    <tbody>
+      ${lines}
+      <tr class="subtotal-row">
+        <td colspan="2" style="text-align:right">SUBTOTAL</td>
+        <td style="text-align:right">${fmt(totals.sub)}</td>
+      </tr>
+      ${advance}
+      ${finalpay}
+      ${fullPaidRow}
+    </tbody>
+  </table>
+  <div class="terms">
+    <b>Terms and Conditions:</b><br>
+    * Invoice / Warranty card must be produced for warranty claims.<br>
+    * For warranty claims, contact RAM GREEN ENERGY (PVT) LTD. on 077 551 2831 / 077 515 8810<br>
+    * Wear and tear on wiring, scratches, stains, etc. that do not affect the function of goods, wiring &amp; other accessories on equipment cannot be claimed under warranty.<br>
+    * Natural perils, misuse of equipment, burnt marks, repairs made by 3rd party other than RAM GREEN ENERGY (PVT) LTD. and any tampering or misuse of equipment renders the warranty void.<br>
+    * Installers and End Consumers are advised to insure the Solar System under "General Insurance Policy", as under no circumstances will RAM GREEN ENERGY (PVT) LTD be liable for consequential, special, direct/indirect, incidental, punitive damages, losses or expenses occurred in any such situations.<br>
+    * Anyone installing batteries that are not compatible with Growth will take the risk of warranty not being honored by the manufacturer company. Similarly we RAM GREEN ENERGY will also not issue replacements if Manufacturer does not advise us to offer this.<br>
+    * In quarterly basic first three years visualization using the Solis smart energy management app.<br><br>
+    <b>Terms and Conditions: Payment</b><br>
+    * Price validity - 5 Working days only<br>
+    * Cheques should be made payable to — RAM GREEN ENERGY (PVT) LTD.<br>
+    * Bank Deposit slip to : ramgreenenergy@gmail.com<br>
+    * Delayed / Overdue payments will be subject to 1% per month on outstanding balances.<br>
+    * Price on items may change according to International Foreign Currency Exchange Rates Banking Information.<br>
+    * Ram Green Energy (Pvt) Ltd. – People's Bank – Trincomalee main branch – 066100140068134.
+  </div>
+  <div class="thankyou">Thank you For Your Business.</div>
   </body></html>`);
   w.document.close(); w.focus(); w.print();
 }
 
 function InvoiceDesk({ role, rows, customers }) {
   const blank = (docType) => ({
-    docType, no: "", customer: "", date: today(), status: "Unpaid", heading: "",
+    docType, no: "", customerFileNo: "", customer: "", billAddress: "",
+    date: today(), status: "Unpaid",
     paymentMethod: "", chequeNo: "", chequeDate: "", bankName: "", transferRef: "",
-    items: [blankLine()], discount: 0, taxPct: 0, notes: "", terms: docType === "Bill" ? t("Please settle this bill within 7 days.") : t("Payment is due within 14 days."),
+    advanceDate: "", advanceAmount: "", advanceMethod: "Cash Deposit",
+    finalDate: "", finalAmount: "", finalMethod: "Cash Deposit",
+    items: [blankLine()],
   });
   const [form, setForm] = useState(null);
   const [editing, setEditing] = useState(null);
@@ -754,32 +823,46 @@ function InvoiceDesk({ role, rows, customers }) {
     const items = r.items?.length ? r.items.map((it) => ({ ...it })) : [{ desc: r.customer ? `${r.customer} — solar work` : "Amount", qty: 1, rate: Number(r.amount || 0) }];
     setEditing(r.id);
     setForm({
-      docType: r.docType === "Bill" ? "Bill" : "Invoice", no: r.no || "", customer: r.customer || "",
-      date: r.date || today(), status: r.status || "Unpaid", heading: r.heading || "", items,
-      paymentMethod: r.paymentMethod || "", chequeNo: r.chequeNo || "", chequeDate: r.chequeDate || "",
-      bankName: r.bankName || "", transferRef: r.transferRef || "",
-      discount: Number(r.discount || 0), taxPct: Number(r.taxPct || 0), notes: r.notes || "", terms: r.terms || "",
+      docType: r.docType === "Bill" ? "Bill" : "Invoice",
+      no: r.no || "", customerFileNo: r.customerFileNo || "",
+      customer: r.customer || "", billAddress: r.billAddress || "",
+      date: r.date || today(), status: r.status || "Unpaid",
+      paymentMethod: r.paymentMethod || "", chequeNo: r.chequeNo || "",
+      chequeDate: r.chequeDate || "", bankName: r.bankName || "", transferRef: r.transferRef || "",
+      advanceDate: r.advanceDate || "", advanceAmount: r.advanceAmount || "",
+      advanceMethod: r.advanceMethod || "Cash Deposit",
+      finalDate: r.finalDate || "", finalAmount: r.finalAmount || "",
+      finalMethod: r.finalMethod || "Cash Deposit",
+      items: r.items?.length ? r.items.map((it) => ({ ...it })) : [{ desc: r.customer ? `${r.customer} — solar work` : "Amount", qty: 1, rate: Number(r.amount || 0) }],
     });
     document.getElementById("bill-editor")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   const save = async (e) => {
     e.preventDefault();
     if (!form.customer.trim()) return toast("Choose a customer");
-    if (form.items.some((it) => Number(it.qty) < 0 || Number(it.rate) < 0) || Number(form.discount) < 0 || Number(form.taxPct) < 0) return toast("Numbers cannot be negative");
-    if ((form.status === "Paid" || form.status === "Partial") && !form.paymentMethod) return toast("Choose cash, cheque, or bank transfer");
-    if (form.paymentMethod === "Cheque" && !String(form.chequeNo || "").trim()) return toast("Enter the cheque number");
-    if (form.paymentMethod === "Bank transfer" && !String(form.transferRef || "").trim()) return toast("Enter the transfer reference");
+    if (form.items.some((it) => Number(it.qty) < 0 || Number(it.rate) < 0)) return toast("Numbers cannot be negative");
     const totals = billTotals(form);
     const data = {
-      docType: form.docType, no: form.no.trim() || `${form.docType === "Bill" ? "BILL" : "INV"}-${Date.now().toString().slice(-6)}`,
-      customer: form.customer.trim(), date: form.date || today(), status: form.status || "Unpaid",
-      paymentMethod: form.paymentMethod || "", chequeNo: form.paymentMethod === "Cheque" ? form.chequeNo.trim() : "",
+      docType: form.docType,
+      no: form.no.trim() || `RGE/OG/${new Date().getMonth()+1}/${String(new Date().getFullYear()).slice(-2)}/${new Date().toLocaleString("default",{month:"short"})}/${String(Date.now()).slice(-6)}`,
+      customerFileNo: form.customerFileNo.trim(),
+      customer: form.customer.trim(),
+      billAddress: form.billAddress.trim(),
+      date: form.date || today(),
+      status: form.status || "Unpaid",
+      paymentMethod: form.paymentMethod || "",
+      chequeNo: form.paymentMethod === "Cheque" ? form.chequeNo.trim() : "",
       chequeDate: form.paymentMethod === "Cheque" ? (form.chequeDate || "") : "",
       bankName: form.paymentMethod === "Cash" ? "" : (form.bankName || "").trim(),
       transferRef: form.paymentMethod === "Bank transfer" ? form.transferRef.trim() : "",
-      heading: form.heading.trim(), notes: form.notes, terms: form.terms,
+      advanceDate: form.advanceDate || "",
+      advanceAmount: Number(form.advanceAmount || 0),
+      advanceMethod: form.advanceMethod || "Cash Deposit",
+      finalDate: form.finalDate || "",
+      finalAmount: Number(form.finalAmount || 0),
+      finalMethod: form.finalMethod || "Cash Deposit",
       items: form.items.map((it) => ({ desc: it.desc || "", qty: Number(it.qty || 0), rate: Number(it.rate || 0) })),
-      discount: Number(form.discount || 0), taxPct: Number(form.taxPct || 0), amount: totals.total,
+      amount: totals.total,
     };
     if (editing) await updateDoc(doc(db, "invoices", editing), data);
     else await addDoc(collection(db, "invoices"), { ...data, createdAt: serverTimestamp() });
@@ -811,9 +894,18 @@ function InvoiceDesk({ role, rows, customers }) {
         <form id="bill-editor" className="card" onSubmit={save}>
           <h3>{editing ? t("Edit {doc}", { doc: form.docType }) : t("New {doc}", { doc: form.docType })}</h3>
           <div className="form">
+            <label>{t("Invoice No")}
+              <input value={form.no} placeholder="RGE/OG/5/26/May/000149" onChange={(e) => set("no", e.target.value)} />
+            </label>
+            <label>{t("Customer File No")}
+              <input value={form.customerFileNo} placeholder="Ram/TR/2026/F/149" onChange={(e) => set("customerFileNo", e.target.value)} />
+            </label>
             <label>{t("Customer")}
               <input list="bill-customers" value={form.customer} required onChange={(e) => set("customer", e.target.value)} />
               <datalist id="bill-customers">{customers.map((c) => <option key={c.id} value={c.name}>{c.code ? `${c.code} — ${c.name}` : c.name}</option>)}</datalist>
+            </label>
+            <label>{t("Bill To Address")}
+              <input value={form.billAddress} placeholder="No. 16/10 A Central Road, Trincomalee" onChange={(e) => set("billAddress", e.target.value)} />
             </label>
             <label>{t("Date")}<input type="date" value={form.date} onChange={(e) => set("date", e.target.value)} /></label>
             <label>{t("Status")}
@@ -821,21 +913,18 @@ function InvoiceDesk({ role, rows, customers }) {
                 {["Unpaid", "Partial", "Paid"].map((s) => <option key={s} value={s}>{t(s)}</option>)}
               </select>
             </label>
-            <label>{t("Payment")}
-              <select value={form.paymentMethod} onChange={(e) => set("paymentMethod", e.target.value)}>
-                <option value="">{t("Choose payment")}</option>
-                {PAY_METHODS.map((m) => <option key={m} value={m}>{t(m)}</option>)}
-              </select>
-            </label>
-            {form.paymentMethod === "Cheque" && <>
-              <label>{t("Cheque no.")}<input value={form.chequeNo} onChange={(e) => set("chequeNo", e.target.value)} /></label>
-              <label>{t("Cheque date")}<input type="date" value={form.chequeDate} onChange={(e) => set("chequeDate", e.target.value)} /></label>
-              <label>{t("Bank name")}<input value={form.bankName} onChange={(e) => set("bankName", e.target.value)} /></label>
-            </>}
-            {form.paymentMethod === "Bank transfer" && <>
-              <label>{t("Transfer reference")}<input value={form.transferRef} onChange={(e) => set("transferRef", e.target.value)} /></label>
-              <label>{t("Bank name")}<input value={form.bankName} onChange={(e) => set("bankName", e.target.value)} /></label>
-            </>}
+          </div>
+          <h3>{t("Advance Payment")}</h3>
+          <div className="form">
+            <label>{t("Advance Date")}<input type="date" value={form.advanceDate} onChange={(e) => set("advanceDate", e.target.value)} /></label>
+            <label>{t("Advance Amount (LKR)")}<input type="number" value={form.advanceAmount} placeholder="500000" onChange={(e) => set("advanceAmount", e.target.value)} /></label>
+            <label>{t("Advance Method")}<input value={form.advanceMethod} placeholder="Cash Deposit" onChange={(e) => set("advanceMethod", e.target.value)} /></label>
+          </div>
+          <h3>{t("Final Payment")}</h3>
+          <div className="form">
+            <label>{t("Final Date")}<input type="date" value={form.finalDate} onChange={(e) => set("finalDate", e.target.value)} /></label>
+            <label>{t("Final Amount (LKR)")}<input type="number" value={form.finalAmount} placeholder="390000" onChange={(e) => set("finalAmount", e.target.value)} /></label>
+            <label>{t("Final Method")}<input value={form.finalMethod} placeholder="Cash Deposit" onChange={(e) => set("finalMethod", e.target.value)} /></label>
           </div>
           <h3>{t("Lines")}</h3>
           <div className="lines-header">
