@@ -1,62 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <!-- Outer circle -->
-  <circle cx="100" cy="100" r="97" fill="white" stroke="#111" stroke-width="4"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220">
+  <!-- Outer circle border -->
+  <circle cx="110" cy="110" r="106" fill="white" stroke="#111" stroke-width="5"/>
 
+  <!-- SUN (top-left area) -->
   <!-- Sun rays -->
-  <g transform="translate(62,42)" stroke="#111" stroke-width="3" stroke-linecap="round">
-    <line x1="18" y1="0" x2="18" y2="7"/>
-    <line x1="18" y1="29" x2="18" y2="36"/>
-    <line x1="0" y1="18" x2="7" y2="18"/>
-    <line x1="29" y1="18" x2="36" y2="18"/>
-    <line x1="4.5" y1="4.5" x2="9.5" y2="9.5"/>
-    <line x1="26.5" y1="26.5" x2="31.5" y2="31.5"/>
-    <line x1="31.5" y1="4.5" x2="26.5" y2="9.5"/>
-    <line x1="9.5" y1="26.5" x2="4.5" y2="31.5"/>
-    <!-- Additional rays -->
-    <line x1="18" y1="0" x2="18" y2="6"/>
-    <line x1="30.7" y1="5.3" x2="26.2" y2="9.8"/>
-    <line x1="36" y1="18" x2="30" y2="18"/>
-    <line x1="30.7" y1="30.7" x2="26.2" y2="26.2"/>
-    <line x1="18" y1="36" x2="18" y2="30"/>
-    <line x1="5.3" y1="30.7" x2="9.8" y2="26.2"/>
-    <line x1="0" y1="18" x2="6" y2="18"/>
-    <line x1="5.3" y1="5.3" x2="9.8" y2="9.8"/>
+  <g stroke="#111" stroke-width="2.8" stroke-linecap="round">
+    <line x1="68" y1="28" x2="68" y2="38"/>
+    <line x1="68" y1="78" x2="68" y2="88"/>
+    <line x1="43" y1="53" x2="53" y2="53"/>
+    <line x1="83" y1="53" x2="93" y2="53"/>
+    <line x1="50" y1="35" x2="57" y2="42"/>
+    <line x1="79" y1="64" x2="86" y2="71"/>
+    <line x1="86" y1="35" x2="79" y2="42"/>
+    <line x1="57" y1="64" x2="50" y2="71"/>
+    <!-- extra rays -->
+    <line x1="68" y1="28" x2="68" y2="36"/>
+    <line x1="88" y1="33" x2="83" y2="40"/>
+    <line x1="93" y1="53" x2="85" y2="53"/>
+    <line x1="88" y1="73" x2="83" y2="66"/>
+    <line x1="68" y1="88" x2="68" y2="80"/>
+    <line x1="48" y1="73" x2="53" y2="66"/>
+    <line x1="43" y1="53" x2="51" y2="53"/>
+    <line x1="48" y1="33" x2="53" y2="40"/>
   </g>
-  <!-- Sun circle -->
-  <circle cx="80" cy="60" r="12" fill="white" stroke="#111" stroke-width="3"/>
+  <!-- Sun circle (hollow) -->
+  <circle cx="68" cy="53" r="14" fill="white" stroke="#111" stroke-width="3.5"/>
 
-  <!-- RAM Green Energy text -->
-  <text x="100" y="55" font-family="Arial Black, sans-serif" font-size="16" font-weight="900" fill="#111" text-anchor="start">RAM</text>
-  <text x="100" y="68" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#111" text-anchor="start">Green Energy</text>
+  <!-- RAM text -->
+  <text x="95" y="50" font-family="Arial Black,Impact,sans-serif" font-size="22" font-weight="900" fill="#111">RAM</text>
+  <!-- Green Energy text -->
+  <text x="95" y="65" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#111">Green Energy</text>
 
-  <!-- Battery+Solar panel body -->
-  <rect x="38" y="95" width="110" height="60" rx="12" ry="12" fill="#111" stroke="#111" stroke-width="2"/>
-  <!-- Battery terminal -->
-  <rect x="148" y="110" width="12" height="28" rx="4" ry="4" fill="#111"/>
-  <!-- Solar panel white background -->
-  <rect x="48" y="102" width="88" height="46" rx="6" ry="6" fill="white"/>
-  <!-- Solar panels - 6 cells (3x2) diagonal style -->
-  <g fill="#111">
-    <!-- Row 1 -->
-    <polygon points="52,108 78,103 78,115 52,120"/>
-    <polygon points="82,103 108,98 108,110 82,115"/>
-    <polygon points="112,98 130,94 130,106 112,110"/>
-    <!-- Row 2 -->
-    <polygon points="52,124 78,119 78,131 52,136"/>
-    <polygon points="82,119 108,114 108,126 82,131"/>
-    <polygon points="112,114 130,110 130,122 112,126"/>
-  </g>
+  <!-- BATTERY BODY (rounded rect) -->
+  <rect x="28" y="110" width="140" height="68" rx="14" ry="14" fill="#111"/>
+  <!-- Battery terminal on right -->
+  <rect x="168" y="126" width="16" height="32" rx="5" ry="5" fill="#111"/>
+  <!-- White inner area of battery -->
+  <rect x="36" y="118" width="120" height="52" rx="8" ry="8" fill="white"/>
 
-  <!-- Wire/cord -->
-  <path d="M 80 155 Q 75 168 68 170 Q 60 172 58 165" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"/>
-  <!-- Plug -->
-  <rect x="52" y="160" width="12" height="8" rx="2" fill="#111"/>
-  <line x1="55" y1="168" x2="55" y2="173" stroke="#111" stroke-width="2.5"/>
-  <line x1="61" y1="168" x2="61" y2="173" stroke="#111" stroke-width="2.5"/>
+  <!-- SOLAR PANELS (6 parallelogram cells, 2 rows x 3 cols, dark fill) -->
+  <!-- Row 1 -->
+  <polygon points="42,124  74,118  74,132  42,138" fill="#222"/>
+  <polygon points="78,118  110,112  110,126  78,132" fill="#222"/>
+  <polygon points="114,112  146,106  146,120  114,126" fill="#222"/>
+  <!-- Row 2 -->
+  <polygon points="42,140  74,134  74,148  42,154" fill="#222"/>
+  <polygon points="78,134  110,128  110,142  78,148" fill="#222"/>
+  <polygon points="114,128  146,122  146,136  114,142" fill="#222"/>
 
-  <!-- Bottom curved text -->
-  <path id="bottomArc" d="M 25 145 A 80 80 0 0 0 175 145" fill="none"/>
-  <text font-family="Arial, sans-serif" font-size="9.5" font-weight="700" fill="#111" text-anchor="middle">
-    <textPath href="#bottomArc" startOffset="50%">RO GREEN ENERGY PVT LTD</textPath>
+  <!-- POWER CORD going down-left from battery -->
+  <path d="M 75 178 Q 70 192 60 194 Q 50 196 48 188" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- PLUG body -->
+  <rect x="40" y="183" width="16" height="9" rx="3" fill="#111"/>
+  <!-- Plug pins -->
+  <line x1="44" y1="192" x2="44" y2="199" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+  <line x1="52" y1="192" x2="52" y2="199" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Bottom curved text path -->
+  <path id="btmArc" d="M 22 148 A 92 92 0 0 0 198 148" fill="none"/>
+  <text font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#111" letter-spacing="1">
+    <textPath href="#btmArc" startOffset="50%" text-anchor="middle">RO GREEN ENERGY PVT LTD</textPath>
   </text>
 </svg>
