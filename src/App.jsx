@@ -997,8 +997,8 @@ function printBill(bill) {
     td{border:1px solid #999;padding:4px 8px;vertical-align:middle}
     .subtotal-row td{font-weight:700;background:#f0f0f0;border-top:1.5px solid #555}
     .fullpaid-row td{font-weight:800;text-align:center;background:#e8f5e9;border-top:2px solid #166534;font-size:12px}
-    .terms{margin-top:10px;font-size:9.2px;line-height:1.55;border-top:1px solid #999;padding-top:8px;color:#222}
-    .terms b{font-size:10px;display:block;margin-bottom:2px}
+    .terms{margin-top:10px;font-size:10.5px;line-height:1.65;border-top:1px solid #999;padding-top:8px;color:#222}
+    .terms b{font-size:11.5px;display:block;margin-bottom:2px}
     .terms-payment{margin-top:6px}
     .thankyou{text-align:center;margin-top:10px;font-size:12px;font-style:italic;font-weight:700;border-top:1px solid #ccc;padding-top:8px}
     @media print{body{padding:8px 14px}@page{margin:5mm}html,body{height:auto}}
@@ -1050,12 +1050,13 @@ function printBill(bill) {
     * Price validity - 5 Working days only<br>
     * Cheques should be made payable to — RAM GREEN ENERGY (PVT) LTD.<br>
     * Bank Deposit slip to : ramgreenenergy@gmail.com<br>
+    <span style="font-size:10.5px;font-weight:600;color:#111">* For any quarries contact our accountant on email - ramgreenenergy@gmail.com</span><br>
     * Delayed / Overdue payments will be subject to 1% per month on outstanding balances.<br>
     * Price on items may change according to International Foreign Currency Exchange Rates Banking Information.<br>
     * Ram Green Energy (Pvt) Ltd. – People's Bank – Trincomalee main branch – 066100140068134.
     </div>
   </div>
-  <div class="thankyou">Thank you For Your Business.<br><span style="font-size:10px;font-weight:400;font-style:normal">For any quarries contact our accountant on email - ramgreenenergy@gmail.com</span></div>
+  <div class="thankyou">Thank you For Your Business.</div>
   </body></html>`);
   w.document.close(); w.focus(); w.print();
 }
