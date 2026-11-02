@@ -73,7 +73,10 @@ main{flex:1;padding:1.75rem 2rem 2.5rem;min-width:0;position:relative;z-index:1}
 .form{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:1rem;align-items:end}
 .form-actions{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:.75rem}
 .lines{display:flex;flex-direction:column;gap:.65rem}
-.line{display:grid;grid-template-columns:minmax(0,1.7fr) .55fr .8fr .75fr auto;gap:.5rem;align-items:center}
+.lines-header{display:grid;grid-template-columns:minmax(0,2fr) minmax(90px,.6fr) minmax(120px,.9fr) minmax(80px,.7fr) auto;gap:.5rem;padding:0 0 .35rem;font-size:.88rem;font-weight:700;color:var(--mu)}
+.lines-header span{text-align:left}
+.lines-header span:nth-child(4),.lines-header span:nth-child(5){visibility:hidden}
+.line{display:grid;grid-template-columns:minmax(0,2fr) minmax(90px,.6fr) minmax(120px,.9fr) minmax(80px,.7fr) auto;gap:.5rem;align-items:center}
 .line b{text-align:right}
 .bill-totals{margin-left:auto;width:min(100%,320px);display:flex;flex-direction:column;gap:.35rem}
 .bill-totals p{display:flex;justify-content:space-between;margin:0}

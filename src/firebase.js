@@ -3,20 +3,15 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FB_API_KEY,
-  authDomain: import.meta.env.VITE_FB_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FB_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FB_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FB_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FB_APP_ID,
+  apiKey: "AIzaSyD0T-Y-5VbKonnt_MpAhGjF42o_3sjMFew",
+  authDomain: "ram-green-erp.firebaseapp.com",
+  projectId: "ram-green-erp",
+  storageBucket: "ram-green-erp.firebasestorage.app",
+  messagingSenderId: "977277723636",
+  appId: "1:977277723636:web:4126bfde67cdbae126cfa1",
 };
 
-export const LOCAL = !firebaseConfig.apiKey;
-let a = null, d = null;
-if (!LOCAL) {
-  const app = initializeApp(firebaseConfig);
-  a = getAuth(app);
-  d = getFirestore(app);
-}
-export const auth = a;
-export const db = d;
+export const LOCAL = false;
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);

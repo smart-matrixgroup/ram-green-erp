@@ -385,6 +385,23 @@ function Crud({ name, role, onOpenCustomer, theme, onToggle, goToCustomer }) {
     if (name === "customers") {
       const prev = editing ? rows.find((r) => r.id === editing) : null;
       data.code = prev?.code || nextClientCode(rows);
+      // Auto-create inventory record for new customer
+      if (!editing) {
+        await addDoc(collection(db, name), { ...data, createdAt: serverTimestamp() });
+        await addDoc(collection(db, "inventory"), {
+          item: `${data.name || "Customer"} — Solar System`,
+          category: "Other",
+          qty: 0,
+          minQty: 0,
+          unitCost: Number(data.projectValue || 0),
+          customerName: data.name || "",
+          customerCode: data.code || "",
+          note: `Auto-created for customer ${data.code || data.name}`,
+          createdAt: serverTimestamp(),
+        });
+        toast("Record saved"); setForm({}); setEditing(null);
+        return;
+      }
     }
     if (name === "expenses") {
       const ok = await saveExpense({ form: data, editing, customers, expenses: rows });
@@ -794,13 +811,6 @@ function InvoiceDesk({ role, rows, customers }) {
         <form id="bill-editor" className="card" onSubmit={save}>
           <h3>{editing ? t("Edit {doc}", { doc: form.docType }) : t("New {doc}", { doc: form.docType })}</h3>
           <div className="form">
-            <label>{t("Document")}
-              <select value={form.docType} onChange={(e) => set("docType", e.target.value)}>
-                <option value="Invoice">{t("Invoice")}</option><option value="Bill">{t("Bill")}</option>
-              </select>
-            </label>
-            <label>{t("Custom heading")}<input value={form.heading} placeholder={t(form.docType === "Bill" ? "BILL" : "INVOICE")} onChange={(e) => set("heading", e.target.value)} /></label>
-            <label>{t("Number")}<input value={form.no} placeholder={form.docType === "Bill" ? "BILL-1001" : "INV-1001"} onChange={(e) => set("no", e.target.value)} /></label>
             <label>{t("Customer")}
               <input list="bill-customers" value={form.customer} required onChange={(e) => set("customer", e.target.value)} />
               <datalist id="bill-customers">{customers.map((c) => <option key={c.id} value={c.name}>{c.code ? `${c.code} — ${c.name}` : c.name}</option>)}</datalist>
@@ -828,12 +838,19 @@ function InvoiceDesk({ role, rows, customers }) {
             </>}
           </div>
           <h3>{t("Lines")}</h3>
+          <div className="lines-header">
+            <span>{t("Description")}</span>
+            <span>{t("Quantity")}</span>
+            <span>{t("Amount (LKR)")}</span>
+            <span></span>
+            <span></span>
+          </div>
           <div className="lines">
             {form.items.map((it, i) => (
               <div className="line" key={i}>
                 <input className="desc" placeholder={t("Description — panels, inverter, labour…")} value={it.desc} onChange={(e) => setLine(i, "desc", e.target.value)} />
                 <input type="number" aria-label={t("Quantity")} value={it.qty} onChange={(e) => setLine(i, "qty", e.target.value)} />
-                <input type="number" aria-label={t("Rate")} value={it.rate} onChange={(e) => setLine(i, "rate", e.target.value)} />
+                <input type="number" aria-label={t("Amount (LKR)")} value={it.rate} onChange={(e) => setLine(i, "rate", e.target.value)} />
                 <b>LKR {fmt(Number(it.qty || 0) * Number(it.rate || 0))}</b>
                 <button type="button" className="btn sm ghost line-actions" disabled={form.items.length === 1} onClick={() => set("items", form.items.filter((_, n) => n !== i))}>{t("Remove")}</button>
               </div>
@@ -842,16 +859,7 @@ function InvoiceDesk({ role, rows, customers }) {
           <div className="form-actions">
             <button type="button" className="btn ghost" onClick={() => set("items", [...form.items, blankLine()])}>{t("Add line")}</button>
           </div>
-          <div className="form">
-            <label>{t("Discount (LKR)")}<input type="number" value={form.discount} onChange={(e) => set("discount", e.target.value)} /></label>
-            <label>{t("Tax %")}<input type="number" value={form.taxPct} onChange={(e) => set("taxPct", e.target.value)} /></label>
-            <label>{t("Notes")}<textarea value={form.notes} rows={3} onChange={(e) => set("notes", e.target.value)} /></label>
-            <label>{t("Terms")}<textarea value={form.terms} rows={3} onChange={(e) => set("terms", e.target.value)} /></label>
-          </div>
           <div className="bill-totals">
-            <p><span>{t("Subtotal")}</span><b>LKR {fmt(totals.sub)}</b></p>
-            <p><span>{t("Discount")}</span><b>LKR {fmt(totals.discount)}</b></p>
-            <p><span>{t("Tax")}</span><b>LKR {fmt(totals.tax)}</b></p>
             <p className="grand"><span>{t("Total")}</span><b>LKR {fmt(totals.total)}</b></p>
           </div>
           <div className="form-actions">
