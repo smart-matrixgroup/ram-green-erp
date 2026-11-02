@@ -984,26 +984,27 @@ function printBill(bill) {
 
   w.document.write(`<!doctype html><html><head><title>Invoice</title><style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:"Times New Roman",serif;font-size:12px;color:#111;padding:28px 36px}
-    .header{display:flex;align-items:flex-start;gap:18px;border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:14px}
-    .logo-box{width:64px;height:64px;border:2px solid #166534;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;font-size:9px;font-weight:700;color:#166534;text-align:center;padding:4px}
-    .co-name{font-size:20px;font-weight:800;letter-spacing:.04em;color:#111}
-    .co-sub{font-size:10.5px;color:#444;margin-top:3px;line-height:1.5}
-    .inv-title{text-align:center;font-size:17px;font-weight:700;margin:10px 0 12px;letter-spacing:.1em}
-    .meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;font-size:11.5px}
-    .meta .bill-to{line-height:1.7}
-    .meta .bill-right{text-align:right;line-height:1.7}
-    table{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:11.5px}
-    th{background:#e8f5e9;border:1px solid #888;padding:6px 8px;font-weight:700;text-align:center}
-    td{border:1px solid #aaa;padding:5px 8px;vertical-align:top}
-    .subtotal-row td{font-weight:700;background:#f5f5f5}
-    .terms{margin-top:14px;font-size:10px;line-height:1.6;border-top:1px solid #aaa;padding-top:10px}
-    .terms b{font-size:11px}
-    .thankyou{text-align:center;margin-top:18px;font-size:13px;font-style:italic;font-weight:700}
-    @media print{body{padding:10px 16px}}
+    body{font-family:"Times New Roman",serif;font-size:11.5px;color:#111;padding:24px 32px}
+    .header{display:flex;align-items:center;gap:14px;border-bottom:2.5px solid #111;padding-bottom:8px;margin-bottom:10px}
+    .co-name{font-size:22px;font-weight:900;letter-spacing:.03em;color:#111;line-height:1.15}
+    .co-sub{font-size:10px;color:#333;margin-top:2px;line-height:1.6}
+    .inv-title{text-align:center;font-size:16px;font-weight:700;margin:8px 0 10px;letter-spacing:.08em}
+    .meta{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;font-size:11px;gap:10px}
+    .bill-to{line-height:1.8}
+    .bill-right{text-align:right;line-height:1.8}
+    table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:11px}
+    th{background:#e8f5e9;border:1px solid #666;padding:5px 8px;font-weight:700;text-align:center}
+    td{border:1px solid #999;padding:4px 8px;vertical-align:middle}
+    .subtotal-row td{font-weight:700;background:#f0f0f0;border-top:1.5px solid #555}
+    .fullpaid-row td{font-weight:800;text-align:center;background:#e8f5e9;border-top:2px solid #166534;font-size:12px}
+    .terms{margin-top:10px;font-size:9.2px;line-height:1.55;border-top:1px solid #999;padding-top:8px;color:#222}
+    .terms b{font-size:10px;display:block;margin-bottom:2px}
+    .terms-payment{margin-top:6px}
+    .thankyou{text-align:center;margin-top:10px;font-size:12px;font-style:italic;font-weight:700;border-top:1px solid #ccc;padding-top:8px}
+    @media print{body{padding:8px 14px}@page{margin:8mm}}
   </style></head><body>
   <div class="header">
-    <img src="${logoImg}" alt="RAM Green Energy" width="70" height="70" style="border-radius:50%;flex:none"/>
+    <img src="${logoImg}" alt="RAM Green Energy" width="90" height="90" style="border-radius:50%;flex:none;object-fit:contain"/>
     <div>
       <div class="co-name">RAM GREEN ENERGY (PVT) LTD.</div>
       <div class="co-sub">No.135B, 1st Floor, Inner harbor Road, Orr's hill, Trincomalee.<br>
@@ -1014,7 +1015,7 @@ function printBill(bill) {
   <div class="meta">
     <div class="bill-to">
       <b>Bill To:</b> ${escHtml(bill.customer || "—")}<br>
-      ${bill.billAddress ? escHtml(bill.billAddress) : ""}
+      ${bill.billAddress ? `<span style="margin-left:46px">${escHtml(bill.billAddress)}</span>` : ""}
     </div>
     <div class="bill-right">
       <b>Date:</b> ${escHtml(bill.date || today())}<br>
@@ -1023,11 +1024,11 @@ function printBill(bill) {
     </div>
   </div>
   <table>
-    <thead><tr><th>Description</th><th>Quantity</th><th>Amount</th></tr></thead>
+    <thead><tr><th style="width:60%">Description</th><th style="width:20%">Quantity</th><th style="width:20%">Amount</th></tr></thead>
     <tbody>
       ${lines}
       <tr class="subtotal-row">
-        <td colspan="2" style="text-align:right">SUBTOTAL</td>
+        <td colspan="2" style="text-align:right;padding-right:12px">SUBTOTAL</td>
         <td style="text-align:right">${fmt(totals.sub)}</td>
       </tr>
       ${advance}
@@ -1036,21 +1037,23 @@ function printBill(bill) {
     </tbody>
   </table>
   <div class="terms">
-    <b>Terms and Conditions:</b><br>
+    <b>Terms and Conditions:</b>
     * Invoice / Warranty card must be produced for warranty claims.<br>
     * For warranty claims, contact RAM GREEN ENERGY (PVT) LTD. on 077 551 2831 / 077 515 8810<br>
     * Wear and tear on wiring, scratches, stains, etc. that do not affect the function of goods, wiring &amp; other accessories on equipment cannot be claimed under warranty.<br>
     * Natural perils, misuse of equipment, burnt marks, repairs made by 3rd party other than RAM GREEN ENERGY (PVT) LTD. and any tampering or misuse of equipment renders the warranty void.<br>
     * Installers and End Consumers are advised to insure the Solar System under "General Insurance Policy", as under no circumstances will RAM GREEN ENERGY (PVT) LTD be liable for consequential, special, direct/indirect, incidental, punitive damages, losses or expenses occurred in any such situations.<br>
     * Anyone installing batteries that are not compatible with Growth will take the risk of warranty not being honored by the manufacturer company. Similarly we RAM GREEN ENERGY will also not issue replacements if Manufacturer does not advise us to offer this.<br>
-    * In quarterly basic first three years visualization using the Solis smart energy management app.<br><br>
-    <b>Terms and Conditions: Payment</b><br>
+    * In quarterly basic first three years visualization using the Solis smart energy management app.
+    <div class="terms-payment">
+    <b>Terms and Conditions: Payment</b>
     * Price validity - 5 Working days only<br>
     * Cheques should be made payable to — RAM GREEN ENERGY (PVT) LTD.<br>
     * Bank Deposit slip to : ramgreenenergy@gmail.com<br>
     * Delayed / Overdue payments will be subject to 1% per month on outstanding balances.<br>
     * Price on items may change according to International Foreign Currency Exchange Rates Banking Information.<br>
     * Ram Green Energy (Pvt) Ltd. – People's Bank – Trincomalee main branch – 066100140068134.
+    </div>
   </div>
   <div class="thankyou">Thank you For Your Business.</div>
   </body></html>`);
