@@ -1001,7 +1001,7 @@ function printBill(bill) {
     .terms b{font-size:10px;display:block;margin-bottom:2px}
     .terms-payment{margin-top:6px}
     .thankyou{text-align:center;margin-top:10px;font-size:12px;font-style:italic;font-weight:700;border-top:1px solid #ccc;padding-top:8px}
-    @media print{body{padding:8px 14px}@page{margin:8mm}}
+    @media print{body{padding:8px 14px}@page{margin:5mm}html,body{height:auto}}
   </style></head><body>
   <div class="header">
     <img src="${logoImg}" alt="RAM Green Energy" width="90" height="90" style="border-radius:50%;flex:none;object-fit:contain"/>
@@ -1055,7 +1055,7 @@ function printBill(bill) {
     * Ram Green Energy (Pvt) Ltd. – People's Bank – Trincomalee main branch – 066100140068134.
     </div>
   </div>
-  <div class="thankyou">Thank you For Your Business.</div>
+  <div class="thankyou">Thank you For Your Business.<br><span style="font-size:10px;font-weight:400;font-style:normal">For any quarries contact our accountant on email - ramgreenenergy@gmail.com</span></div>
   </body></html>`);
   w.document.close(); w.focus(); w.print();
 }
