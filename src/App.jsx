@@ -1426,7 +1426,7 @@ const toast = (m, vars) => window.dispatchEvent(new CustomEvent("toast", { detai
 const Orbs = () => <div className="orbs" aria-hidden="true"><i /><i /><i /><span className="rays" /></div>;
 
 function Logo({ big }) {
-  const z = big ? 96 : 52;
+  const z = big ? 96 : 48;
   return (
     <img
       src={logoImg}
@@ -1434,7 +1434,15 @@ function Logo({ big }) {
       width={z}
       height={z}
       className={"logo-img" + (big ? " big" : "")}
-      style={{ borderRadius: "50%", objectFit: "contain" }}
+      style={{
+        borderRadius: "50%",
+        objectFit: "cover",
+        objectPosition: "center",
+        border: "2px solid #ffffff44",
+        background: "#fff",
+        display: "block",
+        flexShrink: 0,
+      }}
     />
   );
 }
