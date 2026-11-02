@@ -643,7 +643,7 @@ function Crud({ name, role, onOpenCustomer, theme, onToggle, goToCustomer }) {
                   {name === "quotations" && <>
                     <button type="button" className="btn sm ghost" onClick={() => {
                       const cust = customers.find((c) => c.name === r.customer) || {};
-                      printDoc(label, { ...r, nicAddress: r.nicAddress || cust.nicAddress || "", nicNo: r.nicNo || cust.nicNo || "", phone: r.phone || cust.phone || "" }, fields);
+                      printQuotation({ ...r, nicAddress: r.nicAddress || cust.nicAddress || "", nicNo: r.nicNo || cust.nicNo || "", phone: r.phone || cust.phone || "" });
                     }}>{t("Print")}</button>
                     {!["Accepted", "Rejected"].includes(r.status) && <button type="button" className="btn sm" onClick={() => setStatus(r, "Accepted")}>{t("Accept")}</button>}
                     {!["Accepted", "Rejected"].includes(r.status) && <button type="button" className="btn sm ghost" onClick={() => setStatus(r, "Rejected")}>{t("Reject")}</button>}
@@ -774,7 +774,170 @@ function ClientDetail({ id, role, onBack }) {
 }
 
 const escHtml = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const blankLine = () => ({ desc: "", qty: 1, rate: 0 });
+const blankQuotItem = () => ({ desc: "", qty: 1, unitPrice: 0 });
+
+function QuotationDesk({ role, rows, customers }) {
+  const blank = () => ({
+    no: "", customer: "", cebAddress: "", date: today(),
+    status: "Draft",
+    quotItems: [blankQuotItem()],
+    panelSerials: "",
+  });
+  const [form, setForm] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const setLine = (i, k, v) => setForm((f) => ({ ...f, quotItems: f.quotItems.map((it, n) => n === i ? { ...it, [k]: v } : it) }));
+  const openNew = () => { setEditing(null); setForm(blank()); };
+  const openEdit = (r) => {
+    setEditing(r.id);
+    setForm({
+      no: r.no || "", customer: r.customer || "", cebAddress: r.cebAddress || "",
+      date: r.date || today(), status: r.status || "Draft",
+      quotItems: r.quotItems?.length ? r.quotItems.map((it) => ({ ...it })) : [blankQuotItem()],
+      panelSerials: r.panelSerials || "",
+    });
+    document.getElementById("quot-editor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  const total = form ? form.quotItems.reduce((s, it) => s + Number(it.qty || 0) * Number(it.unitPrice || 0), 0) : 0;
+  const save = async (e) => {
+    e.preventDefault();
+    if (!form.customer.trim()) return toast("Choose a customer");
+    const data = {
+      no: form.no.trim() || `Q-${Date.now().toString().slice(-6)}`,
+      customer: form.customer.trim(),
+      cebAddress: form.cebAddress.trim(),
+      date: form.date || today(),
+      status: form.status || "Draft",
+      quotItems: form.quotItems.map((it) => ({ desc: it.desc || "", qty: Number(it.qty || 0), unitPrice: Number(it.unitPrice || 0) })),
+      panelSerials: form.panelSerials || "",
+      amount: form.quotItems.reduce((s, it) => s + Number(it.qty || 0) * Number(it.unitPrice || 0), 0),
+      capacityKw: 0,
+      createdAt: editing ? undefined : serverTimestamp(),
+    };
+    if (!editing) { delete data.createdAt; await addDoc(collection(db, "quotations"), { ...data, createdAt: serverTimestamp() }); }
+    else await updateDoc(doc(db, "quotations", editing), data);
+    toast(editing ? "Quotation updated" : "Quotation saved");
+    setForm(null); setEditing(null);
+  };
+  const setStatus = async (r, status) => { await updateDoc(doc(db, "quotations", r.id), { status }); toast("Marked {status}", { status }); };
+  const toProject = async (r) => {
+    const ref = await addDoc(collection(db, "projects"), {
+      title: `${r.customer || "Customer"} Solar Project`,
+      customer: r.customer || "", capacityKw: Number(r.capacityKw || 0),
+      value: Number(r.amount || 0), stage: "Survey", date: today(),
+      panelSerials: r.panelSerials || "", cebAddress: r.cebAddress || "",
+      createdAt: serverTimestamp(),
+    });
+    await updateDoc(doc(db, "quotations", r.id), { status: "Accepted", projectId: ref.id });
+    toast("Project created from this quotation");
+  };
+  const toInvoice = async (r) => {
+    await addDoc(collection(db, "invoices"), {
+      no: `INV-${Date.now().toString().slice(-6)}`, customer: r.customer || "",
+      amount: Number(r.amount || 0), status: "Unpaid", paymentMethod: "", date: today(), createdAt: serverTimestamp(),
+    });
+    await updateDoc(doc(db, "quotations", r.id), { status: "Accepted" });
+    toast("Invoice created from this quotation");
+  };
+  const shown = rows.filter((r) => JSON.stringify(r).toLowerCase().includes(search.toLowerCase()) && (!filter || r.status === filter));
+  const statusOpts = ["Draft", "Sent", "Accepted", "Rejected"];
+  return (
+    <>
+      <div className="quick">
+        <button type="button" onClick={openNew}>{t("New quotation")}</button>
+      </div>
+      {form && (
+        <form id="quot-editor" className="card" onSubmit={save}>
+          <h3>{editing ? t("Edit Quotation") : t("New Quotation")}</h3>
+          <div className="form">
+            <label>{t("Quote #")}<input value={form.no} placeholder="Q-001" onChange={(e) => set("no", e.target.value)} /></label>
+            <label>{t("Customer")}
+              <input list="quot-customers" value={form.customer} required onChange={(e) => set("customer", e.target.value)} />
+              <datalist id="quot-customers">{customers.map((c) => <option key={c.id} value={c.name}>{c.code ? `${c.code} — ${c.name}` : c.name}</option>)}</datalist>
+            </label>
+            <label>{t("CEB Address")}<input value={form.cebAddress} placeholder="No. 16/10 A Central Road..." onChange={(e) => set("cebAddress", e.target.value)} /></label>
+            <label>{t("Date")}<input type="date" value={form.date} onChange={(e) => set("date", e.target.value)} /></label>
+            <label>{t("Status")}
+              <select value={form.status} onChange={(e) => set("status", e.target.value)}>
+                {statusOpts.map((s) => <option key={s} value={s}>{t(s)}</option>)}
+              </select>
+            </label>
+          </div>
+          <h3>{t("Items")}</h3>
+          <div className="lines-header">
+            <span>{t("Description")}</span>
+            <span>{t("Qty")}</span>
+            <span>{t("Unit Price (LKR)")}</span>
+            <span>{t("Amount")}</span>
+            <span></span>
+          </div>
+          <div className="lines">
+            {form.quotItems.map((it, i) => (
+              <div className="line" key={i}>
+                <input className="desc" placeholder={t("e.g. Solis 5kW Inverter S/N-...")} value={it.desc} onChange={(e) => setLine(i, "desc", e.target.value)} />
+                <input type="number" aria-label={t("Qty")} value={it.qty} onChange={(e) => setLine(i, "qty", e.target.value)} />
+                <input type="number" aria-label={t("Unit Price")} value={it.unitPrice} onChange={(e) => setLine(i, "unitPrice", e.target.value)} />
+                <b>LKR {fmt(Number(it.qty || 0) * Number(it.unitPrice || 0))}</b>
+                <button type="button" className="btn sm ghost line-actions" disabled={form.quotItems.length === 1} onClick={() => set("quotItems", form.quotItems.filter((_, n) => n !== i))}>{t("Remove")}</button>
+              </div>
+            ))}
+          </div>
+          <div className="form-actions">
+            <button type="button" className="btn ghost" onClick={() => set("quotItems", [...form.quotItems, blankQuotItem()])}>{t("Add line")}</button>
+          </div>
+          <div className="bill-totals">
+            <p className="grand"><span>{t("Total")}</span><b>LKR {fmt(total)}</b></p>
+          </div>
+          <label style={{ marginTop: "1rem" }}>{t("Panel Serial Numbers (one per line)")}
+            <textarea value={form.panelSerials} rows={6} placeholder={"2620107340926391\n2620107340934028\n..."} autoComplete="off"
+              onChange={(e) => set("panelSerials", e.target.value)}
+              style={{ fontFamily: "monospace", fontSize: "0.85rem" }} />
+          </label>
+          <div className="form-actions" style={{ marginTop: "1rem" }}>
+            <button className="btn">{editing ? t("Update Quotation") : t("Save Quotation")}</button>
+            <button type="button" className="btn ghost" onClick={() => { setForm(null); setEditing(null); }}>{t("Cancel")}</button>
+          </div>
+        </form>
+      )}
+      <div className="card">
+        <div className="pills">{[t("Open quotes LKR {n}", { n: fmt(rows.filter((q) => !["Rejected","Accepted"].includes(q.status)).reduce((s,q)=>s+Number(q.amount||0),0)) }), `${rows.length} quotations`].map((p) => <b key={p}>{p}</b>)}</div>
+        <div className="toolbar">
+          <input className="search" placeholder={t("Search quotations")} value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <div className="filters">
+          <button type="button" className={!filter ? "on" : ""} onClick={() => setFilter("")}>{t("All")}</button>
+          {statusOpts.map((o) => <button type="button" key={o} className={filter === o ? "on" : ""} onClick={() => setFilter(o)}>{t(o)}</button>)}
+        </div>
+        <div className="scroll"><table>
+          <thead><tr><th>{t("Quote #")}</th><th>{t("Customer")}</th><th>{t("Date")}</th><th>{t("Status")}</th><th>{t("Total (LKR)")}</th><th>{t("Actions")}</th></tr></thead>
+          <tbody>
+            {shown.map((r) => (
+              <tr key={r.id}>
+                <td>{r.no || "—"}</td><td>{r.customer || "—"}</td>
+                <td>{r.date || "—"}</td><td>{t(r.status || "—")}</td><td>{fmt(r.amount)}</td>
+                <td className="acts">
+                  <button type="button" className="btn sm ghost" onClick={() => openEdit(r)}>{t("Edit")}</button>
+                  <button type="button" className="btn sm ghost" onClick={() => {
+                    const cust = customers.find((c) => c.name === r.customer) || {};
+                    printQuotation({ ...r, nicAddress: r.nicAddress || cust.nicAddress || "", nicNo: r.nicNo || cust.nicNo || "", phone: r.phone || cust.phone || "" });
+                  }}>{t("Print")}</button>
+                  {!["Accepted","Rejected"].includes(r.status) && <button type="button" className="btn sm" onClick={() => setStatus(r, "Accepted")}>{t("Accept")}</button>}
+                  {!["Accepted","Rejected"].includes(r.status) && <button type="button" className="btn sm ghost" onClick={() => setStatus(r, "Rejected")}>{t("Reject")}</button>}
+                  {!r.projectId && r.status !== "Rejected" && <button type="button" className="btn sm" onClick={() => toProject(r)}>{t("Create project")}</button>}
+                  {!r.invoiceId && r.status !== "Rejected" && <button type="button" className="btn sm" onClick={() => toInvoice(r)}>{t("Create invoice")}</button>}
+                  {role === "admin" && <button type="button" className="btn sm danger" onClick={() => window.confirm(t("Delete this record?")) && deleteDoc(doc(db, "quotations", r.id)).then(() => toast("Record deleted"))}>{t("Delete")}</button>}
+                </td>
+              </tr>
+            ))}
+            {shown.length === 0 && <tr><td colSpan={6} className="muted">{t("No quotations yet.")}</td></tr>}
+          </tbody>
+        </table></div>
+      </div>
+    </>
+  );
+}
 
 function billTotals(doc) {
   const items = doc.items?.length ? doc.items : [{ desc: "Amount", qty: 1, rate: Number(doc.amount || 0) }];
@@ -1150,7 +1313,8 @@ export default function App() {
   const ok = !!user;
   const data = {
     customers: useCol("customers", ok), projects: useCol("projects", ok),
-    inventory: useCol("inventory", ok), invoices: useCol("invoices", ok), expenses: useCol("expenses", ok),
+    inventory: useCol("inventory", ok), invoices: useCol("invoices", ok),
+    quotations: useCol("quotations", ok), expenses: useCol("expenses", ok),
     adminExpenses: useCol("adminExpenses", ok),
   };
   if (user === undefined) return <div className="login"><Orbs /><Logo big /></div>;
@@ -1212,6 +1376,7 @@ export default function App() {
             : tab === "language" ? <LanguageScreen />
             : viewingClient ? <ClientDetail id={clientId} role={role} onBack={() => setClientId(null)} />
             : tab === "invoices" ? <InvoiceDesk role={role} rows={data.invoices} customers={data.customers} />
+            : tab === "quotations" ? <QuotationDesk role={role} rows={data.quotations || []} customers={data.customers} />
             : <Crud name={tab} role={role} onOpenCustomer={setClientId} theme={theme} onToggle={toggleTheme} goToCustomer={(customerName) => {
                 const found = data.customers.find((c) => c.name === customerName);
                 if (found) { setClientId(found.id); setTab("customers"); }
