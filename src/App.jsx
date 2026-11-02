@@ -984,23 +984,23 @@ function printBill(bill) {
 
   w.document.write(`<!doctype html><html><head><title>Invoice</title><style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:"Times New Roman",serif;font-size:11.5px;color:#111;padding:24px 32px}
+    body{font-family:"Times New Roman",serif;font-size:13px;color:#111;padding:24px 32px}
     .header{display:flex;align-items:center;gap:14px;border-bottom:2.5px solid #111;padding-bottom:8px;margin-bottom:10px}
-    .co-name{font-size:22px;font-weight:900;letter-spacing:.03em;color:#111;line-height:1.15}
-    .co-sub{font-size:10px;color:#333;margin-top:2px;line-height:1.6}
-    .inv-title{text-align:center;font-size:16px;font-weight:700;margin:8px 0 10px;letter-spacing:.08em}
-    .meta{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;font-size:11px;gap:10px}
+    .co-name{font-size:24px;font-weight:900;letter-spacing:.03em;color:#111;line-height:1.15}
+    .co-sub{font-size:11.5px;color:#333;margin-top:2px;line-height:1.6}
+    .inv-title{text-align:center;font-size:18px;font-weight:700;margin:8px 0 10px;letter-spacing:.08em}
+    .meta{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;font-size:12.5px;gap:10px}
     .bill-to{line-height:1.8}
     .bill-right{text-align:right;line-height:1.8}
-    table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:11px}
-    th{background:#e8f5e9;border:1px solid #666;padding:5px 8px;font-weight:700;text-align:center}
-    td{border:1px solid #999;padding:4px 8px;vertical-align:middle}
+    table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:12.5px}
+    th{background:#e8f5e9;border:1px solid #666;padding:6px 8px;font-weight:700;text-align:center}
+    td{border:1px solid #999;padding:5px 8px;vertical-align:middle}
     .subtotal-row td{font-weight:700;background:#f0f0f0;border-top:1.5px solid #555}
-    .fullpaid-row td{font-weight:800;text-align:center;background:#e8f5e9;border-top:2px solid #166534;font-size:12px}
-    .terms{margin-top:10px;font-size:10.5px;line-height:1.65;border-top:1px solid #999;padding-top:8px;color:#222}
-    .terms b{font-size:11.5px;display:block;margin-bottom:2px}
+    .fullpaid-row td{font-weight:800;text-align:center;background:#e8f5e9;border-top:2px solid #166534;font-size:13px}
+    .terms{margin-top:10px;font-size:11.5px;line-height:1.7;border-top:1px solid #999;padding-top:8px;color:#222}
+    .terms b{font-size:12.5px;display:block;margin-bottom:3px}
     .terms-payment{margin-top:6px}
-    .thankyou{text-align:center;margin-top:10px;font-size:12px;font-style:italic;font-weight:700;border-top:1px solid #ccc;padding-top:8px}
+    .thankyou{text-align:center;margin-top:10px;font-size:13px;font-style:italic;font-weight:700;border-top:1px solid #ccc;padding-top:8px}
     @media print{body{padding:8px 14px}@page{margin:5mm}html,body{height:auto}}
   </style></head><body>
   <div class="header">
