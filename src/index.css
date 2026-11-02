@@ -132,9 +132,9 @@ input[readonly]{background:#f3f4f6;color:var(--mu)}
 .roi-row{margin:0 0 1.1rem}.roi-row span{display:block;color:var(--mu);font-size:1rem}.roi-row b{display:block;font-size:1.7rem;color:var(--g);line-height:1.2}
 .toasts{position:fixed;right:1.1rem;bottom:1.1rem;display:flex;flex-direction:column;gap:.6rem;z-index:50}
 .toast{background:var(--g);color:#fff;padding:.85rem 1.15rem;border-radius:12px;box-shadow:0 6px 20px #0004;font-size:1.05rem;animation:pop .3s both}
-.logo .rays-g{fill:var(--amb);transform-box:view-box;transform-origin:center;animation:spin 14s linear infinite}
-.logo .core{fill:#f59e0b;transform-box:fill-box;transform-origin:center;animation:pulse 2.4s ease-in-out infinite}
-.logo .leaf{fill:#166534}.logo.big{filter:drop-shadow(0 0 14px #fbbf2499)}
+.logo-img{display:block;flex:none;transition:transform .3s}
+.logo-img.big{filter:drop-shadow(0 0 14px #fbbf2499);animation:pulse 2.4s ease-in-out infinite}
+.brand .logo-img{border-radius:50%}
 @media(min-width:1400px){
   main{padding:2rem 2.5rem 3rem}
 }

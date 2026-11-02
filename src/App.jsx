@@ -120,7 +120,7 @@ function printQuotation(q) {
     @media print{body{padding:10px 16px}}
   </style></head><body>
   <div class="header">
-    <div class="logo-box">RAM<br>GREEN</div>
+    <img src="/logo.svg" alt="RAM Green Energy" width="70" height="70" style="border-radius:50%;flex:none"/>
     <div>
       <div class="co-name">RAM GREEN ENERGY (PVT) LTD.</div>
       <div class="co-sub">No.135B, 1st Floor, Inner harbor Road, Orr's hill, Trincomalee.<br>
@@ -1002,7 +1002,7 @@ function printBill(bill) {
     @media print{body{padding:10px 16px}}
   </style></head><body>
   <div class="header">
-    <div class="logo-box">RAM<br>GREEN</div>
+    <img src="/logo.svg" alt="RAM Green Energy" width="70" height="70" style="border-radius:50%;flex:none"/>
     <div>
       <div class="co-name">RAM GREEN ENERGY (PVT) LTD.</div>
       <div class="co-sub">No.135B, 1st Floor, Inner harbor Road, Orr's hill, Trincomalee.<br>
@@ -1416,11 +1416,14 @@ const Orbs = () => <div className="orbs" aria-hidden="true"><i /><i /><i /><span
 function Logo({ big }) {
   const z = big ? 96 : 52;
   return (
-    <svg className={"logo" + (big ? " big" : "")} viewBox="0 0 48 48" width={z} height={z}>
-      <g className="rays-g">{[...Array(8)].map((_, i) => <rect key={i} x="22.5" y="1" width="3" height="8" rx="1.5" transform={`rotate(${i * 45} 24 24)`} />)}</g>
-      <circle className="core" cx="24" cy="24" r="11" />
-      <path className="leaf" d="M18 27c5-1 8-4 10-10 1 7-3 12-10 10z" />
-    </svg>
+    <img
+      src="/logo.svg"
+      alt="Ram Green Energy Logo"
+      width={z}
+      height={z}
+      className={"logo-img" + (big ? " big" : "")}
+      style={{ borderRadius: "50%", objectFit: "contain" }}
+    />
   );
 }
 

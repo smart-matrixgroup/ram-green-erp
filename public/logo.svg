@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Outer circle -->
+  <circle cx="100" cy="100" r="97" fill="white" stroke="#111" stroke-width="4"/>
+
+  <!-- Sun rays -->
+  <g transform="translate(62,42)" stroke="#111" stroke-width="3" stroke-linecap="round">
+    <line x1="18" y1="0" x2="18" y2="7"/>
+    <line x1="18" y1="29" x2="18" y2="36"/>
+    <line x1="0" y1="18" x2="7" y2="18"/>
+    <line x1="29" y1="18" x2="36" y2="18"/>
+    <line x1="4.5" y1="4.5" x2="9.5" y2="9.5"/>
+    <line x1="26.5" y1="26.5" x2="31.5" y2="31.5"/>
+    <line x1="31.5" y1="4.5" x2="26.5" y2="9.5"/>
+    <line x1="9.5" y1="26.5" x2="4.5" y2="31.5"/>
+    <!-- Additional rays -->
+    <line x1="18" y1="0" x2="18" y2="6"/>
+    <line x1="30.7" y1="5.3" x2="26.2" y2="9.8"/>
+    <line x1="36" y1="18" x2="30" y2="18"/>
+    <line x1="30.7" y1="30.7" x2="26.2" y2="26.2"/>
+    <line x1="18" y1="36" x2="18" y2="30"/>
+    <line x1="5.3" y1="30.7" x2="9.8" y2="26.2"/>
+    <line x1="0" y1="18" x2="6" y2="18"/>
+    <line x1="5.3" y1="5.3" x2="9.8" y2="9.8"/>
+  </g>
+  <!-- Sun circle -->
+  <circle cx="80" cy="60" r="12" fill="white" stroke="#111" stroke-width="3"/>
+
+  <!-- RAM Green Energy text -->
+  <text x="100" y="55" font-family="Arial Black, sans-serif" font-size="16" font-weight="900" fill="#111" text-anchor="start">RAM</text>
+  <text x="100" y="68" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#111" text-anchor="start">Green Energy</text>
+
+  <!-- Battery+Solar panel body -->
+  <rect x="38" y="95" width="110" height="60" rx="12" ry="12" fill="#111" stroke="#111" stroke-width="2"/>
+  <!-- Battery terminal -->
+  <rect x="148" y="110" width="12" height="28" rx="4" ry="4" fill="#111"/>
+  <!-- Solar panel white background -->
+  <rect x="48" y="102" width="88" height="46" rx="6" ry="6" fill="white"/>
+  <!-- Solar panels - 6 cells (3x2) diagonal style -->
+  <g fill="#111">
+    <!-- Row 1 -->
+    <polygon points="52,108 78,103 78,115 52,120"/>
+    <polygon points="82,103 108,98 108,110 82,115"/>
+    <polygon points="112,98 130,94 130,106 112,110"/>
+    <!-- Row 2 -->
+    <polygon points="52,124 78,119 78,131 52,136"/>
+    <polygon points="82,119 108,114 108,126 82,131"/>
+    <polygon points="112,114 130,110 130,122 112,126"/>
+  </g>
+
+  <!-- Wire/cord -->
+  <path d="M 80 155 Q 75 168 68 170 Q 60 172 58 165" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+  <!-- Plug -->
+  <rect x="52" y="160" width="12" height="8" rx="2" fill="#111"/>
+  <line x1="55" y1="168" x2="55" y2="173" stroke="#111" stroke-width="2.5"/>
+  <line x1="61" y1="168" x2="61" y2="173" stroke="#111" stroke-width="2.5"/>
+
+  <!-- Bottom curved text -->
+  <path id="bottomArc" d="M 25 145 A 80 80 0 0 0 175 145" fill="none"/>
+  <text font-family="Arial, sans-serif" font-size="9.5" font-weight="700" fill="#111" text-anchor="middle">
+    <textPath href="#bottomArc" startOffset="50%">RO GREEN ENERGY PVT LTD</textPath>
+  </text>
+</svg>
