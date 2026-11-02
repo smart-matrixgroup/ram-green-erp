@@ -26,12 +26,12 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          VITE_FB_API_KEY: ${{ secrets.VITE_FB_API_KEY }}
-          VITE_FB_AUTH_DOMAIN: ${{ secrets.VITE_FB_AUTH_DOMAIN }}
-          VITE_FB_PROJECT_ID: ${{ secrets.VITE_FB_PROJECT_ID }}
-          VITE_FB_STORAGE_BUCKET: ${{ secrets.VITE_FB_STORAGE_BUCKET }}
-          VITE_FB_MESSAGING_SENDER_ID: ${{ secrets.VITE_FB_MESSAGING_SENDER_ID }}
-          VITE_FB_APP_ID: ${{ secrets.VITE_FB_APP_ID }}
+          VITE_FB_API_KEY: AIzaSyD0T-Y-5VbKonnt_MpAhGjF42o_3sjMFew
+          VITE_FB_AUTH_DOMAIN: ram-green-erp.firebaseapp.com
+          VITE_FB_PROJECT_ID: ram-green-erp
+          VITE_FB_STORAGE_BUCKET: ram-green-erp.firebasestorage.app
+          VITE_FB_MESSAGING_SENDER_ID: "977277723636"
+          VITE_FB_APP_ID: 1:977277723636:web:4126bfde67cdbae126cfa1
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
