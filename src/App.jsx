@@ -22,7 +22,9 @@ const MODULES = {
     ["no", "Invoice #"], ["customer", "Customer"], ["amount", "Amount (LKR)", "number"],
     ["status", "Status", "select", ["Unpaid", "Partial", "Paid"]], ["date", "Date", "date"]] },
   quotations: { label: "Quotations", icon: "📝", fields: [
-    ["no", "Quote #"], ["customer", "Customer"], ["capacityKw", "Capacity (kW)", "number"], ["amount", "Amount (LKR)", "number"],
+    ["no", "Quote #"], ["customer", "Customer"], ["cebAddress", "CEB Address"],
+    ["capacityKw", "Capacity (kW)", "number"], ["amount", "Amount (LKR)", "number"],
+    ["panelSerials", "Panel Serial Numbers (one per line)"],
     ["status", "Status", "select", ["Draft", "Sent", "Accepted", "Rejected"]], ["date", "Date", "date"]] },
   siteVisits: { label: "Site Visits", icon: "📍", fields: [
     ["customer", "Customer"], ["address", "Address"], ["type", "Type", "select", ["Survey", "Installation", "Maintenance"]],
@@ -58,6 +60,8 @@ const REL = {
 const today = () => new Date().toISOString().slice(0, 10);
 
 const printDoc = (title, r, fields) => {
+  // Quotations — RAM GREEN format
+  if (title === "Quotations") { printQuotation(r); return; }
   const w = window.open("", "_blank");
   if (!w) { toast("Allow pop-ups to print"); return; }
   const rows = fields.map(([k, l, kind]) => {
@@ -74,6 +78,76 @@ const printDoc = (title, r, fields) => {
   <p>${escHtml(t("Printed {when}", { when }))}</p><table>${rows}</table></body></html>`);
   w.document.close(); w.focus(); w.print();
 };
+
+function printQuotation(q) {
+  const w = window.open("", "_blank");
+  if (!w) { toast("Allow pop-ups to print"); return; }
+  // Items — use quotItems if available, else single line
+  const items = q.quotItems?.length ? q.quotItems : [{ no: "01", desc: q.capacityKw ? `${q.capacityKw}kW Solar System` : "Solar System", qty: 1, unitPrice: Number(q.amount || 0), amount: Number(q.amount || 0) }];
+  const itemRows = items.map((it, i) => `
+    <tr>
+      <td style="text-align:center">${escHtml(String(it.no || String(i+1).padStart(2,"0")))}</td>
+      <td>${escHtml(it.desc || "—")}</td>
+      <td style="text-align:center">${it.qty || ""}</td>
+      <td style="text-align:right">${it.unitPrice ? fmt(it.unitPrice) : ""}</td>
+      <td style="text-align:right">${fmt(it.amount || Number(it.qty||1)*Number(it.unitPrice||0))}</td>
+    </tr>`).join("");
+  const total = items.reduce((s, it) => s + Number(it.amount || Number(it.qty||1)*Number(it.unitPrice||0)), 0);
+  // Panel serial numbers
+  const serials = q.panelSerials ? String(q.panelSerials).split("\n").map((s,i) => s.trim()).filter(Boolean) : [];
+  const serialTable = serials.length ? `
+    <table style="margin-top:18px;width:auto;min-width:260px">
+      <thead><tr><th style="text-align:center">NO</th><th>Panel Serial Numbers</th></tr></thead>
+      <tbody>${serials.map((s,i) => `<tr><td style="text-align:center">${String(i+1).padStart(2,"0")}</td><td>${escHtml(s)}</td></tr>`).join("")}</tbody>
+    </table>` : "";
+  w.document.write(`<!doctype html><html><head><title>Quotation</title><style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Times New Roman",serif;font-size:12px;color:#111;padding:28px 36px}
+    .header{display:flex;align-items:flex-start;gap:18px;border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:14px}
+    .logo-box{width:64px;height:64px;border:2px solid #166534;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;font-size:9px;font-weight:700;color:#166534;text-align:center;padding:4px}
+    .co-name{font-size:20px;font-weight:800;letter-spacing:.04em}
+    .co-sub{font-size:10.5px;color:#444;margin-top:3px;line-height:1.5}
+    .cust-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:11.5px}
+    .cust-table td{border:1px solid #aaa;padding:5px 10px}
+    .cust-table td:first-child{width:140px;background:#f0fdf4;font-weight:700}
+    table{width:100%;border-collapse:collapse;font-size:11.5px}
+    th{background:#e8f5e9;border:1px solid #888;padding:6px 8px;font-weight:700}
+    td{border:1px solid #aaa;padding:5px 8px;vertical-align:top}
+    .total-row td{font-weight:800;background:#f5f5f5;font-size:12.5px}
+    .thankyou{text-align:center;margin-top:16px;font-size:13px;font-style:italic;font-weight:700}
+    @media print{body{padding:10px 16px}}
+  </style></head><body>
+  <div class="header">
+    <div class="logo-box">RAM<br>GREEN</div>
+    <div>
+      <div class="co-name">RAM GREEN ENERGY (PVT) LTD.</div>
+      <div class="co-sub">No.135B, 1st Floor, Inner harbor Road, Orr's hill, Trincomalee.<br>
+      026-2221400 / 0775158810 / 0775512831</div>
+    </div>
+  </div>
+  <table class="cust-table">
+    <tr><td>Name</td><td>${escHtml(q.customer || "—")}</td></tr>
+    <tr><td>CEB Address</td><td>${escHtml(q.cebAddress || "—")}</td></tr>
+    <tr><td>NIC Address</td><td>${escHtml(q.nicAddress || "—")}</td></tr>
+    <tr><td>NIC Number</td><td>${escHtml(q.nicNo || "—")}</td></tr>
+    <tr><td>Tel number</td><td>${escHtml(q.phone || "—")}</td></tr>
+    <tr><td>Date</td><td>${escHtml(q.date || "—")}</td></tr>
+  </table>
+  <table>
+    <thead><tr><th style="width:40px">NO</th><th>Description</th><th style="width:50px">Qty</th><th style="width:100px">Unit Price</th><th style="width:100px">Amount</th></tr></thead>
+    <tbody>
+      ${itemRows}
+      <tr class="total-row">
+        <td colspan="4" style="text-align:right">TOTAL</td>
+        <td style="text-align:right">${fmt(total)}.00</td>
+      </tr>
+      <tr><td colspan="5" style="text-align:center;padding:8px;font-weight:700">THANK YOU</td></tr>
+    </tbody>
+  </table>
+  ${serialTable}
+  </body></html>`);
+  w.document.close(); w.focus(); w.print();
+}
 
 const exportCsv = (label, fields, rows) => {
   const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
@@ -490,6 +564,11 @@ function Crud({ name, role, onOpenCustomer, theme, onToggle, goToCustomer }) {
                   <option value="">{t("Select {label}", { label: getLang() === "ta" ? t(l) : l.toLowerCase() })}</option>
                   {opts.map((o) => <option key={o} value={o}>{t(o)}</option>)}
                 </select>
+              ) : k === "panelSerials" ? (
+                <textarea placeholder={t("One serial number per line\n2620107340926391\n2620107340934028")}
+                  value={form[k] ?? ""} rows={5} autoComplete="off"
+                  onChange={(e) => set(k, e.target.value)}
+                  style={{ fontFamily: "monospace", fontSize: "0.85rem" }} />
               ) : (
                 <>
                   <input list={listId} placeholder={k === "category" ? t("Type category") : t(l)} type={kind || "text"}
@@ -554,7 +633,10 @@ function Crud({ name, role, onOpenCustomer, theme, onToggle, goToCustomer }) {
                 <td className="acts" onClick={(e) => e.stopPropagation()}>
                   {name === "projects" && r.stage !== "Commissioned" && <button type="button" className="btn sm" onClick={() => advance(r)}>{t("Next stage")}</button>}
                   {name === "quotations" && <>
-                    <button type="button" className="btn sm ghost" onClick={() => printDoc(label, r, fields)}>{t("Print")}</button>
+                    <button type="button" className="btn sm ghost" onClick={() => {
+                      const cust = customers.find((c) => c.name === r.customer) || {};
+                      printDoc(label, { ...r, nicAddress: r.nicAddress || cust.nicAddress || "", nicNo: r.nicNo || cust.nicNo || "", phone: r.phone || cust.phone || "" }, fields);
+                    }}>{t("Print")}</button>
                     {!["Accepted", "Rejected"].includes(r.status) && <button type="button" className="btn sm" onClick={() => setStatus(r, "Accepted")}>{t("Accept")}</button>}
                     {!["Accepted", "Rejected"].includes(r.status) && <button type="button" className="btn sm ghost" onClick={() => setStatus(r, "Rejected")}>{t("Reject")}</button>}
                     {!r.projectId && r.status !== "Rejected" && <button type="button" className="btn sm" onClick={() => toProject(r)}>{t("Create project")}</button>}
