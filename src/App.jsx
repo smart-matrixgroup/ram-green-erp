@@ -14,7 +14,9 @@ const MODULES = {
     ["title", "Project"], ["customer", "Customer"], ["capacityKw", "Capacity (kW)", "number"],
     ["value", "Value (LKR)", "number"],
     ["stage", "Stage", "select", ["Survey", "Design", "Installation", "CEB Approval", "Commissioned"]],
-    ["date", "Start date", "date"]] },
+    ["date", "Start date", "date"],
+    ["panelSerials", "Panel Serial Numbers (one per line)"],
+    ["cebAddress", "CEB Address"]] },
   inventory: { label: "Inventory", icon: "📦", fields: [
     ["item", "Item"], ["category", "Category", "select", ["Panel", "Inverter", "Battery", "Cable", "Mounting", "Other"]],
     ["qty", "Qty", "number"], ["minQty", "Min qty", "number"], ["unitCost", "Unit cost", "number"]] },
@@ -513,8 +515,14 @@ function Crud({ name, role, onOpenCustomer, theme, onToggle, goToCustomer }) {
   const toProject = async (r) => {
     const ref = await addDoc(collection(db, "projects"), {
       title: `${r.customer || "Customer"} ${r.capacityKw || ""} kW`.trim(),
-      customer: r.customer || "", capacityKw: Number(r.capacityKw || 0), value: Number(r.amount || 0),
-      stage: "Survey", date: today(), createdAt: serverTimestamp(),
+      customer: r.customer || "",
+      capacityKw: Number(r.capacityKw || 0),
+      value: Number(r.amount || 0),
+      stage: "Survey",
+      date: today(),
+      panelSerials: r.panelSerials || "",
+      cebAddress: r.cebAddress || "",
+      createdAt: serverTimestamp(),
     });
     await updateDoc(doc(db, "quotations", r.id), { status: "Accepted", projectId: ref.id });
     toast("Project created from this quotation");
